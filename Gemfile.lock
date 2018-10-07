@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/chef/omnibus-software.git
-  revision: 8e69931190ce86dc3f6e1644127790638a954007
+  revision: 67a458d2e8a55b267fe0b47f6e1ec9c01e097137
   specs:
     omnibus-software (4.0.0)
       chef-sugar (>= 3.4.0)
@@ -11,13 +11,13 @@ GEM
   specs:
     addressable (2.3.8)
     awesome_print (1.8.0)
-    aws-sdk (2.11.142)
-      aws-sdk-resources (= 2.11.142)
-    aws-sdk-core (2.11.142)
+    aws-sdk (2.11.144)
+      aws-sdk-resources (= 2.11.144)
+    aws-sdk-core (2.11.144)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.11.142)
-      aws-sdk-core (= 2.11.142)
+    aws-sdk-resources (2.11.144)
+      aws-sdk-core (= 2.11.144)
     aws-sigv4 (1.0.3)
     berkshelf (3.3.0)
       addressable (~> 2.3.4)
@@ -230,4 +230,4 @@ DEPENDENCIES
   test-kitchen (~> 1.4)
 
 BUNDLED WITH
-   1.16.1
+   1.13.7
