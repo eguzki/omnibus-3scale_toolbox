@@ -1,4 +1,6 @@
 language: ruby
+rvm:
+- 2.4.0
 sudo: required
 os:
 - linux
@@ -10,11 +12,7 @@ addons:
     target_paths:
     - /3scale/3scale_toolbox/omnibus/$TRAVIS_OS_NAME/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}
 cache: bundler
-before_install:
-- gem install bundler -v 1.15.1
-rvm:
-- 2.4.0
-install:
-- "bundle install --binstubs"
+before_script:
+- "rm -rf pkg/*"
 script:
-- "bundle exec omnibus build 3scale_toolbox"
+- "./build.sh"
