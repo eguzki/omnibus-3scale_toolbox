@@ -1,4 +1,5 @@
 language: ruby
+sudo: required
 os:
 - linux
 - osx
@@ -16,4 +17,4 @@ rvm:
 install:
 - "bundle install --binstubs"
 script:
-- "sudo bundle exec omnibus build 3scale_toolbox"
+- "bundle exec omnibus build 3scale_toolbox"
