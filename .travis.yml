@@ -1,5 +1,7 @@
 language: ruby
 sudo: required
+# skip installation step
+install: true
 matrix:
   include:
     - os: osx
