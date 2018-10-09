@@ -1,0 +1,19 @@
+language: ruby
+os:
+- linux
+- osx
+addons:
+  artifacts:
+    paths:
+    - ./pkg
+    target_paths:
+    - /3scale/3scale_toolbox/omnibus/$TRAVIS_OS_NAME/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}
+cache: bundler
+before_install:
+- gem install bundler -v 1.15.1
+rvm:
+- 2.4.0
+install:
+- "bundle install --binstubs"
+script:
+- "bundle exec omnibus build 3scale_toolbox"
