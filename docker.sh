@@ -11,4 +11,4 @@ BUILD_AT="/build"
 
 docker run -it --rm -v "$(pwd):${BUILD_AT}" -w "$BUILD_AT" \
            -e "DOCKER_TAG=${DOCKER_TAG}" "$DOCKER_IMAGE" \
-           native.sh
+           ./native.sh
