@@ -1,18 +1,33 @@
 language: ruby
-rvm:
-- 2.4.0
 sudo: required
-os:
-- linux
-- osx
+matrix:
+  include:
+    - os: osx
+      env:
+        - BUILD_ENGINE=native
+      rvm: 2.4.0
+    - os: linux
+      env:
+        - BUILD_ENGINE=docker
+        - DOCKER_IMAGE=ubuntu-1604
+      services:
+        - docker
+    - os: linux
+      env:
+        - BUILD_ENGINE=docker
+        - DOCKER_IMAGE=centos-7
+      services:
+        - docker
 addons:
   artifacts:
     paths:
     - ./pkg
     target_paths:
     - /3scale/3scale_toolbox/omnibus/$TRAVIS_OS_NAME/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}
-cache: bundler
+
 before_script:
 - "rm -rf pkg/*"
+install:
+- "./install.sh"
 script:
 - "./build.sh"
