@@ -16,4 +16,4 @@ rvm:
 install:
 - "bundle install --binstubs"
 script:
-- "bundle exec omnibus build 3scale_toolbox"
+- "sudo bundle exec omnibus build 3scale_toolbox"
