@@ -22,7 +22,7 @@ You create a platform-specific package using the `build project` command:
 $ bin/omnibus build 3scale_toolbox
 ```
 
-The platform/architecture type of the package created will match the platform
+The architecture type of the package created will match the platform
 where the `build project` command is invoked. For example, running this command
 on a MacBook Pro will generate a Mac OS X package. After the build completes
 packages will be available in the `pkg/` folder.
