@@ -1,4 +1,4 @@
-3scale_toolbox Omnibus project
+3scale_toolbox Packaging project
 ==============================
 This project creates full-stack platform-specific packages for
 `3scale_toolbox`!
@@ -78,43 +78,3 @@ omnibus manifest PROJECT -l warn
 
 This will output a JSON-formatted manifest containing the resolved
 version of every software definition.
-
-
-Kitchen-based Build Environment
--------------------------------
-Every Omnibus project ships will a project-specific
-[Berksfile](https://docs.chef.io/berkshelf.html) that will allow you to build your omnibus projects on all of the projects listed
-in the `.kitchen.yml`. You can add/remove additional platforms as needed by
-changing the list found in the `.kitchen.yml` `platforms` YAML stanza.
-
-This build environment is designed to get you up-and-running quickly. However,
-there is nothing that restricts you to building on other platforms. Simply use
-the [omnibus cookbook](https://github.com/chef-cookbooks/omnibus) to setup
-your desired platform and execute the build steps listed above.
-
-The default build environment requires Test Kitchen and VirtualBox for local
-development. Test Kitchen also exposes the ability to provision instances using
-various cloud providers like AWS, DigitalOcean, or OpenStack. For more
-information, please see the [Test Kitchen documentation](https://kitchen.ci/).
-
-Once you have tweaked your `.kitchen.yml` (or `.kitchen.local.yml`) to your
-liking, you can bring up an individual build environment using the `kitchen`
-command.
-
-```shell
-$ bin/kitchen converge ubuntu-1204
-```
-
-Then login to the instance and build the project as described in the Usage
-section:
-
-```shell
-$ bundle exec kitchen login ubuntu-1204
-[vagrant@ubuntu...] $ cd 3scale_toolbox
-[vagrant@ubuntu...] $ bundle install
-[vagrant@ubuntu...] $ ...
-[vagrant@ubuntu...] $ bin/omnibus build 3scale_toolbox
-```
-
-For a complete list of all commands and platforms, run `kitchen list` or
-`kitchen help`.
