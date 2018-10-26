@@ -14,5 +14,13 @@ end
 relative_path "3scale_toolbox-#{version}"
 
 build do
-  gem "install 3scale_toolbox -n #{install_dir}/bin --no-rdoc --no-ri -v #{version}"
+  env = with_standard_compiler_flags(with_embedded_path)
+  gem 'install 3scale_toolbox' \
+      "--bindir '#{install_dir}/bin'" \
+      '--no-rdoc --no-ri' \
+      "--version #{version}", env: env
+  usr_bin_dir = '/usr/local/bin'
+
+  # make symlinks
+  link("#{install_dir}/bin/3scale", "#{usr_bin_dir}/3scale")
 end
