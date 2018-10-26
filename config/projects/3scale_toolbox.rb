@@ -13,6 +13,7 @@ homepage 'https://github.com/3scale/3scale_toolbox'
 install_dir "#{default_root}/#{name}"
 
 build_version '0.5.0'
+config_override append_timestamp: false
 
 build_iteration 1
 
