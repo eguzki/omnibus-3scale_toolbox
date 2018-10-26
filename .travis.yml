@@ -27,6 +27,7 @@ deploy:
   - pkg/*.rpm
   - pkg/*.deb
   - pkg/*.pkg
+  skip_cleanup: true
   on:
     tags: true
 
