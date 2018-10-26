@@ -16,6 +16,7 @@ matrix:
 before_script:
 - rm -rf pkg/*
 script:
+- "mkdir pkg"
 - "echo \"this is content\" > pkg/${BUILD_ENGINE}"
 - ls -lah pkg
 deploy:
