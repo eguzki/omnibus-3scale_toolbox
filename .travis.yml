@@ -1,34 +1,31 @@
 language: ruby
 sudo: required
-# skip installation step
 install: true
 matrix:
   include:
-    - os: osx
-      env:
-        - BUILD_ENGINE=native
-      rvm: 2.4.0
-    - os: linux
-      env:
-        - BUILD_ENGINE=docker
-        - DOCKER_TAG=xenial-2.4.1
-      services:
-        - docker
-    - os: linux
-      env:
-        - BUILD_ENGINE=docker
-        - DOCKER_TAG=centos7-2.4
-      services:
-        - docker
-addons:
-  artifacts:
-    paths:
-    - ./pkg
-    target_paths:
-    - /3scale/3scale_toolbox/omnibus/$TRAVIS_OS_NAME/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}
-
+  - os: osx
+    env:
+    - BUILD_ENGINE=package.pkg
+    rvm: 2.4.0
+  - os: linux
+    env:
+    - BUILD_ENGINE=package.deb
+  - os: linux
+    env:
+    - BUILD_ENGINE=package.rpm
 before_script:
-- "rm -rf pkg/*"
+- rm -rf pkg/*
 script:
-- "./${BUILD_ENGINE}.sh"
-- "ls -lah pkg"
+- "echo \"this is content\" > pkg/${BUILD_ENGINE}"
+- ls -lah pkg
+deploy:
+  provider: releases
+  api_key:
+    secure: DYLzWJCvUhHWGAUSft5O0RrgZ4cpAQcH3o+JkuBKfl4hOnDFioCIZu27Kt872ZrFFPN+nQnHt3mFdS5mDdGGU1rty3jHfToizTFBVdH9oOJ9CAiKdb2RkUtCkS1UGipkgAvELSraM2Kbg3+rg8e0C5h55nsMr2SW3P0rvXldH4K2+KkYOqpY8ub8dg2TDpx6oQIrOU3dcgHpSVziBczPzSyhNCx4zO3LAQkV6pNcnjS82J9IYK3kBY+pSDsSlZNOx1KfC6OuMChFqttIuxTy6fyh8yE1h8xTVRuBetEJwIsTtIscmibsgXs4gpS9KPUIC7xdvpphgqDuD0U0YXkdADdg0YDYJi3icesP/VW74HSo7kSxlj8ClZqYfHQPcn6Mkyo7EOv47vTNcxk80lmwxmRMBnu59YewuihP4ecOeZesmCvOR4AqabkUkSxteYsCsv9K1Yqn3HsCej4jFSOmSAZPMt3tERwyec82j5zOPrOOiHS0mnGzUbpRGp9i85FhLTHPxANfk+7qxIo4C1QzM9oMsL16Uuvihdr3iI/gXyRsjNGlk6Q8G83WpprlqRgq7asFKKKZSPWaMjgGSDzk8uw+fad6OCT2M5YBr9Db68t6LG4LOsrpX+FS2fsM1VJ3BnET8J5S8zebtitJI3hZLr8Bi2agHim4H00Zh4rfpNE=
+  file:
+  - pkg/*.rpm
+  - pkg/*.deb
+  - pkg/*.pkg
+  on:
+    tags: true
+
