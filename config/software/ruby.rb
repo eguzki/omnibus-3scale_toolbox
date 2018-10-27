@@ -26,7 +26,7 @@ skip_transitive_dependency_licensing true
 #   https://bugs.ruby-lang.org/issues/11869
 # - the current status of 2.3.x is that it downloads but fails to compile.
 # - verify that all ffi libs are available for your version on all platforms.
-default_version "2.3.1"
+default_version "2.1.8"
 
 fips_enabled = (project.overrides[:fips] && project.overrides[:fips][:enabled]) || false
 
@@ -37,7 +37,13 @@ dependency "libffi"
 dependency "libyaml"
 # Needed for chef_gem installs of (e.g.) nokogiri on upgrades -
 # they expect to see our libiconv instead of a system version.
+# Ignore on windows - TDM GCC comes with libiconv in the runtime
+# and that's the only one we will ever use.
 dependency "libiconv"
+
+version("2.4.4")      { source sha256: "254f1c1a79e4cc814d1e7320bc5bdd995dc57e08727d30a767664619a9c8ae5a" }
+version("2.4.1")      { source sha256: "a330e10d5cb5e53b3a0078326c5731888bb55e32c4abfeb27d9e7f8e5d000250" }
+version("2.4.0")      { source sha256: "152fd0bd15a90b4a18213448f485d4b53e9f7662e1508190aa5b702446b29e3d" }
 
 version("2.3.1")      { source sha256: "b87c738cb2032bf4920fef8e3864dc5cf8eae9d89d8d523ce0236945c5797dcd" }
 version("2.3.0")      { source md5: "e81740ac7b14a9f837e9573601db3162" }
@@ -104,11 +110,14 @@ elsif aix?
 elsif solaris_10?
   if sparc?
     # Known issue with rubby where too much GCC optimization blows up miniruby on sparc
-    env["CFLAGS"] << " -std=c99 -O3 -g -pipe -mcpu=v9"
+    env["CFLAGS"] << " -std=c99 -g -pipe -mcpu=v9 -fms-extensions"
     env["LDFLAGS"] << " -mcpu=v9"
   else
-    env["CFLAGS"] << " -std=c99 -O3 -g -pipe"
+    env["CFLAGS"] << " -std=c99 -O3 -g -pipe -fms-extensions"
   end
+elsif solaris_11?
+  env["CFLAGS"] << " -std=c99"
+  env["CPPFLAGS"] << " -D_XOPEN_SOURCE=600 -D_XPG6"
 elsif windows?
   env["CPPFLAGS"] << " -DFD_SETSIZE=2048"
 else # including linux
@@ -127,6 +136,10 @@ build do
 
   if solaris_10? && version.satisfies?(">= 2.1")
     patch source: "ruby-no-stack-protector.patch", plevel: 1, env: patch_env
+    if version.satisfies?("= 2.4.4") && sparc?
+      patch source: "ruby-remove-headc.patch", plevel: 1, env: patch_env
+      patch source: "ruby-no-m32-cflag.patch", plevel: 1, env: patch_env
+    end
   elsif solaris_11? && version =~ /^2.1/
     patch source: "ruby-solaris-linux-socket-compat.patch", plevel: 1, env: patch_env
   end
@@ -153,15 +166,10 @@ build do
     # be fixed.
   end
 
-  # Fix gem install paths in msys2.
-  if windows? && version.satisfies?(">= 2.3")
-    patch source: "ruby-2.3-msys2-mingw.patch", plevel: 1, env: patch_env
-  end
-
   # Fix reserve stack segmentation fault when building on RHEL5 or below
   # Currently only affects 2.1.7 and 2.2.3. This patch taken from the fix
   # in Ruby trunk and expected to be included in future point releases.
-  # https://bugs.ruby-lang.org/issues/11602
+  # https://redmine.ruby-lang.org/issues/11602
   if rhel? &&
       platform_version.satisfies?("< 6") &&
       (version == "2.1.7" || version == "2.2.3")
@@ -178,12 +186,12 @@ build do
                        "--disable-dtrace"]
   configure_command << "--with-ext=psych" if version.satisfies?("< 2.3")
   configure_command << "--with-bundled-md5" if fips_enabled
-  # solaris 10u7- ipv6 support is broken
-  configure_command << "--disable-ipv6" if solaris_10?
 
   if aix?
     # need to patch ruby's configure file so it knows how to find shared libraries
     patch source: "ruby-aix-configure.patch", plevel: 1, env: patch_env
+    # configure no longer seems to work under ksh, use bash instead
+    patch source: "ruby-aix-configure-use-bash.patch", plevel: 1, env: patch_env
     # have ruby use zlib on AIX correctly
     patch source: "ruby_aix_openssl.patch", plevel: 1, env: patch_env
     # AIX has issues with ssl retries, need to patch to have it retry
@@ -223,9 +231,6 @@ build do
     end
 
     configure_command << " debugflags=-g"
-  elsif solaris? && version.satisfies?(">= 2.3")
-    patch source: "ruby-solaris-10u6-ntop.patch", plevel: 1, env: patch_env
-    configure_command << "--with-opt-dir=#{install_dir}/embedded"
   else
     configure_command << "--with-opt-dir=#{install_dir}/embedded"
   end
@@ -236,9 +241,8 @@ build do
   env["PKG_CONFIG"] = "/bin/true" if aix?
 
   configure(*configure_command, env: env)
-  pmake = "-j #{workers}"
-  make pmake, env: env
-  make "#{pmake} install", env: env
+  make "-j #{workers}", env: env
+  make "-j #{workers} install", env: env
 
   if windows?
     # Needed now that we switched to msys2 and have not figured out how to tell
@@ -251,7 +255,7 @@ build do
     end
     dlls.each do |dll|
       arch_suffix = windows_arch_i386? ? "32" : "64"
-      windows_path = "C:/opscode/omnibus-toolchain/embedded/bin/mingw64/bin/#{dll}.dll"
+      windows_path = "C:/opscode/omnibus-toolchain/embedded/bin/#{dll}.dll"
       if File.exist?(windows_path)
         copy windows_path, "#{install_dir}/embedded/bin/#{dll}.dll"
       else
