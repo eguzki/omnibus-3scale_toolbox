@@ -2,6 +2,7 @@ language: ruby
 sudo: required
 # skip installation step
 install: true
+if: tag IS present
 matrix:
   include:
     - os: osx
