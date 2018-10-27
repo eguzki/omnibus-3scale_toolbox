@@ -21,6 +21,7 @@ dependency 'preparation'
 
 override :ruby, version: '2.3.1'
 override :rubygems, version: '2.4.8'
+override :libffi, source: { url: 'https://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz' }
 
 dependency '3scale_toolbox'
 

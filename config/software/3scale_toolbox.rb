@@ -4,7 +4,6 @@ default_version '0.4.0'
 
 dependency 'ruby'
 dependency 'rubygems'
-dependency 'bundler'
 
 version '0.5.0' do
   source url: "https://github.com/3scale/3scale_toolbox/archive/v#{version}.tar.gz",
