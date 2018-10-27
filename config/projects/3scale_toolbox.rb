@@ -19,7 +19,7 @@ build_iteration 1
 # Creates required build directories
 dependency 'preparation'
 
-override :ruby, version: '2.3.1'
+override :ruby, version: '2.3.1', source: { url: 'https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.1.tar.gz' }
 override :rubygems, version: '2.4.8'
 
 dependency '3scale_toolbox'
