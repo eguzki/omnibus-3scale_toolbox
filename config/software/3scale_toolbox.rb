@@ -32,4 +32,9 @@ build do
     mode: 0755
   )
   project.extra_package_file(entrypoint_dest)
+
+  files_dir = "#{project.files_path}/#{name}"
+  etc_dir = '/etc'
+  copy("#{files_dir}/3scale.conf", "#{etc_dir}/3scale.conf")
+  project.extra_package_file("#{etc_dir}/3scale.conf")
 end
