@@ -1,7 +1,14 @@
 source 'https://rubygems.org'
 
+# support extra_package_files w/macos pkg packager
+# https://github.com/sensu/omnibus/commit/87df1ff6ff0ffd4d404f728ebfb1bf0493d38a54
+omnibus_version = if /darwin/ =~ RUBY_PLATFORM
+                    { git: 'https://github.com/sensu/omnibus.git', branch: 'sensu' }
+                  else
+                    '~> 6.0'
+                  end
 # Install omnibus
-gem 'omnibus', ENV.fetch('OMNIBUS_VERSION', '~> 6.0')
+gem 'omnibus', omnibus_version
 
 # Use Chef's software definitions. It is recommended that you write your own
 # software definitions, but you can clone/fork Chef's to get you started.
@@ -16,6 +23,6 @@ group :development do
   gem 'berkshelf', '~> 3.3'
 
   # Use Test Kitchen with Vagrant for converging the build environment
-  gem 'test-kitchen',    '~> 1.4'
   gem 'kitchen-vagrant', '~> 0.18'
+  gem 'test-kitchen',    '~> 1.4'
 end
