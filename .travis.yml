@@ -8,17 +8,20 @@ matrix:
     - os: osx
       env:
         - BUILD_ENGINE=native
+        - OMNIBUS_VERSION=":git => 'https://github.com/sensu/omnibus.git', :branch => 'sensu'"
       rvm: 2.4.0
     - os: linux
       env:
         - BUILD_ENGINE=docker
         - DOCKER_TAG=xenial-2.4.1
+        - OMNIBUS_VERSION="~> 6.0"
       services:
         - docker
     - os: linux
       env:
         - BUILD_ENGINE=docker
         - DOCKER_TAG=centos7-2.4
+        - OMNIBUS_VERSION="~> 6.0"
       services:
         - docker
 before_script:
